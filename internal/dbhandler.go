@@ -14,7 +14,7 @@ func GetDB() *sql.DB {
 	if db != nil {
 		return db
 	}
-	db, err := sql.Open("mysql", "user:password@/dbname")
+	db, err := sql.Open("mysql", "user:user@/go_jwt")
 	if err != nil {
 		panic(err)
 	}
