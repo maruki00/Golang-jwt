@@ -2,6 +2,7 @@ package internal
 
 import (
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,23 +14,31 @@ type UserRepository struct {
 
 var secretKey = []byte("secret-key")
 
-func (obj *UserRepository) Login(email, password string) (error, *UserModel) {
+func (obj *UserRepository) Login(email, password string) (*AuthDTO, error) {
+	auth := &AuthDTO{}
 	db := GetDB()
 	defer db.Close()
 	hash := md5.Sum([]byte(password))
 	h := fmt.Sprintf("%x", hash)
-	statement, err := db.Prepare("select * from users where email=? and password = ?")
+	statement, err := db.Prepare("select id, email,fullname  from users where email=? and password = ?")
 	if err != nil {
 		panic("invalid credentails")
 	}
-	rows := statement.QueryRow(email, h).Scan()
+	err = statement.QueryRow(email, h).Scan(&auth.Id, &auth.Email, &auth.Fullname)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, errors.New("invalid creadentails " + err.Error())
+	}
+
+	auth.Token, err = createToken(auth.Email, auth.Fullname)
 
 }
 
-func createToken(username string) (string, error) {
+func createToken(email, fullname string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"username": username,
+			"email":    email,
+			"fullname": fullname,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
 
