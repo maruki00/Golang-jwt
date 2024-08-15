@@ -4,7 +4,6 @@ import (
 	"Golang-jwt/internal/dtos"
 	"Golang-jwt/internal/services"
 	"encoding/json"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,9 +40,24 @@ func (l *UserController) RegisterAction(ctx *gin.Context) {
 	var dto dtos.RegisterDTO
 	json.NewDecoder(ctx.Request.Body).Decode(&dto)
 
-	fmt.Println("level : ", dto)
-
 	res, err := l.service.Register(dto.Email, dto.Password, dto.Fullname, dto.Address)
+
+	if err != nil {
+		ctx.JSON(400, map[string]string{
+			"mesage": "invalid credentials",
+		})
+		return
+	}
+
+	ctx.JSON(200, res)
+}
+
+func (l *UserController) GetUsersAction(ctx *gin.Context) {
+
+	var dto dtos.GetUsersDTO
+	json.NewDecoder(ctx.Request.Body).Decode(&dto)
+
+	res, err := l.service.GetUsers(dto.Page, dto.Offset)
 
 	if err != nil {
 		ctx.JSON(400, map[string]string{

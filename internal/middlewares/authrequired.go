@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"Golang-jwt/internal/core"
 	"fmt"
 	"strings"
 
@@ -17,7 +18,6 @@ func verifyToken(tokenString string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("tokn : ", token)
 	if !token.Valid {
 		return fmt.Errorf("invalid token")
 	}
@@ -32,6 +32,7 @@ func AuthRequired() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(401, map[string]string{
 				"error: ": "Missing authorization header",
 			})
+			return
 		}
 
 		tokenString = strings.Replace(tokenString, "Bearer ", "", 7)
@@ -42,8 +43,28 @@ func AuthRequired() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(401, map[string]string{
 				"error: ": "unauthorized",
 			})
+			return
 
 		}
+
+		db := core.GetDB()
+
+		st, err := db.Prepare("select * from auths where token = ?")
+		if err != nil {
+			ctx.AbortWithStatusJSON(401, map[string]string{
+				"error: ": "unauthorized",
+			})
+			return
+		}
+		var user_id int
+		err = st.QueryRow(tokenString).Scan(&user_id)
+		if err != nil {
+			ctx.AbortWithStatusJSON(401, map[string]string{
+				"error: ": "unauthorized",
+			})
+			return
+		}
+
 		ctx.Next()
 	}
 }

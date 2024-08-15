@@ -32,13 +32,15 @@ func (obj *UserRepository) Login(email, password string) (*dtos.AuthDTO, error) 
 	}
 	err = statement.QueryRow(email, getPass(password)).Scan(&auth.Id, &auth.Email, &auth.Fullname)
 	if err != nil {
-		fmt.Println(err.Error())
 		return nil, errors.New("could not login db error  " + err.Error())
 	}
 	auth.Token, err = createToken(auth.Email, auth.Fullname)
 	if err != nil {
 		panic("could not create token ")
 	}
+
+	statement, _ = db.Prepare("delete from auths where user_id = ?")
+	_, _ = statement.Exec(auth.Id)
 
 	statement, err = db.Prepare("INSERT INTO auths (token, email, fullname,user_id) VALUES (?,?,?,?)")
 	if err != nil {
@@ -71,30 +73,39 @@ func (l *UserRepository) Register(email, fullname, address, password string) (*d
 	db := core.GetDB()
 	statement, err := db.Prepare("INSERT INTO users (email, fullname, address ,password) VALUES (?,?,?,?)")
 	if err != nil {
-		fmt.Println(err.Error())
 		return nil, errors.New("invalid data  ")
 	}
 
-	res, err := statement.Exec(email, fullname, address, getPass(password))
+	_, err = statement.Exec(email, fullname, address, getPass(password))
 	if err != nil {
-		fmt.Println(err.Error())
 		return nil, errors.New("invalid data  ")
 	}
-	fmt.Println("\nresult register : ", res)
+
 	return nil, nil
 }
 
 func (l *UserRepository) GetUsers(page, offset int) ([]*models.UserModel, error) {
-
+	items := make([]*models.UserModel, 0)
 	db := core.GetDB()
+	if page < 0 {
+		page = 0
+	}
 	pag := (page * offset) + offset
-	statement, err := db.Prepare("SELECT id, email, fullname, address from users limit ?,? ")
+	statement, err := db.Prepare("SELECT id, email, fullname, address from users limit ? ")
 	if err != nil {
 		return nil, errors.New("something wrong")
 	}
 
-	res := statement.QueryRow(pag, offset)
-	fmt.Print(res.Scan())
+	var u models.UserModel
+	res, _ := statement.Query(pag)
 
-	return []*models.UserModel{}, nil
+	for res.Next() {
+		err = res.Scan(&u.Id, &u.Email, &u.FullName, &u.Address)
+		fmt.Println(u)
+		if err == nil {
+			items = append(items, &u)
+		}
+	}
+
+	return items, nil
 }

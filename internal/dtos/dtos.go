@@ -18,3 +18,8 @@ type AuthDTO struct {
 	Fullname string
 	Token    string
 }
+
+type GetUsersDTO struct {
+	Page   int
+	Offset int
+}
