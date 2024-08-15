@@ -16,7 +16,7 @@ func main() {
 
 	router := gin.New()
 	router.Use(middlewares.AuthRequired())
-	routes.RegisterAuth(router)
+	routes.RegisterUsers(router)
 
 	router.Run(":3000")
 }
