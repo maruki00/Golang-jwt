@@ -9,17 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthController struct {
-	service services.AuthService
+type UserController struct {
+	service services.UserService
 }
 
-func NewAuthController(service services.AuthService) *AuthController {
-	return &AuthController{
+func NewUserController(service services.UserService) *UserController {
+	return &UserController{
 		service: service,
 	}
 }
 
-func (l *AuthController) LoginAction(ctx *gin.Context) {
+func (l *UserController) LoginAction(ctx *gin.Context) {
 
 	var dto dtos.LoginDTO
 	json.NewDecoder(ctx.Request.Body).Decode(&dto)
@@ -36,7 +36,7 @@ func (l *AuthController) LoginAction(ctx *gin.Context) {
 	ctx.JSON(200, auth)
 }
 
-func (l *AuthController) RegisterAction(ctx *gin.Context) {
+func (l *UserController) RegisterAction(ctx *gin.Context) {
 
 	var dto dtos.RegisterDTO
 	json.NewDecoder(ctx.Request.Body).Decode(&dto)

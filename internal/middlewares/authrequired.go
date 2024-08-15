@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -26,24 +27,23 @@ func verifyToken(tokenString string) error {
 func AuthRequired() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
-		// tokenString := ctx.Request.Header.Get("Authorization")
-		// if tokenString == "" || len(tokenString) < 8 {
-		// 	ctx.AbortWithStatusJSON(401, map[string]string{
-		// 		"error: ": "Missing authorization header",
-		// 	})
-		// }
+		tokenString := ctx.Request.Header.Get("Authorization")
+		if tokenString == "" || len(tokenString) < 8 {
+			ctx.AbortWithStatusJSON(401, map[string]string{
+				"error: ": "Missing authorization header",
+			})
+		}
 
-		// tokenString = strings.Replace(tokenString, "Bearer ", "", 7)
+		tokenString = strings.Replace(tokenString, "Bearer ", "", 7)
 
-		// err := verifyToken(tokenString)
+		err := verifyToken(tokenString)
 
-		// if err != nil {
-		// 	ctx.AbortWithStatusJSON(401, map[string]string{
-		// 		"error: ": "unauthorized",
-		// 	})
+		if err != nil {
+			ctx.AbortWithStatusJSON(401, map[string]string{
+				"error: ": "unauthorized",
+			})
 
-		// }
-		// fmt.Print(tokenString)
+		}
 		ctx.Next()
 	}
 }

@@ -7,13 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterAuth(router *gin.Engine) {
+func RegisterUsers(router *gin.Engine) {
 	//authController
 
 	// authrepo := &repositories.UserRepository{}
-	authservice := services.AuthService{}
-	authController := controllers.NewAuthController(authservice)
+	authservice := services.UserService{}
+	authController := controllers.NewUserController(authservice)
 
 	router.POST("/api/auth/login", authController.LoginAction)
+	router.POST("/api/auth/register", authController.RegisterAction)
 	router.POST("/api/auth/register", authController.RegisterAction)
 }

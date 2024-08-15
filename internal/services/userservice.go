@@ -5,16 +5,16 @@ import (
 	"Golang-jwt/internal/repositories"
 )
 
-type AuthService struct {
+type UserService struct {
 	repo repositories.UserRepository
 }
 
-func (l *AuthService) Login(login, password string) (*dtos.AuthDTO, error) {
+func (l *UserService) Login(login, password string) (*dtos.AuthDTO, error) {
 
 	return l.repo.Login(login, password)
 }
 
-func (l *AuthService) Register(email, password, fullname, address string) (*dtos.RegisterDTO, error) {
+func (l *UserService) Register(email, password, fullname, address string) (*dtos.RegisterDTO, error) {
 
 	return l.repo.Register(email, fullname, address, password)
 }

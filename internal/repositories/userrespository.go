@@ -90,11 +90,11 @@ func (l *UserRepository) GetUsers(page, offset int) ([]*models.UserModel, error)
 	pag := (page * offset) + offset
 	statement, err := db.Prepare("SELECT id, email, fullname, address from users limit ?,? ")
 	if err != nil {
-		return nil, errors.New("something wrong ....")
+		return nil, errors.New("something wrong")
 	}
 
 	res := statement.QueryRow(pag, offset)
 	fmt.Print(res.Scan())
 
-	return []models.UserModel{}
+	return []*models.UserModel{}, nil
 }
