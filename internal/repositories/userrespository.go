@@ -101,7 +101,6 @@ func (l *UserRepository) GetUsers(page, offset int) ([]*models.UserModel, error)
 
 	for res.Next() {
 		err = res.Scan(&u.Id, &u.Email, &u.FullName, &u.Address)
-		fmt.Println(u)
 		if err == nil {
 			items = append(items, &u)
 		}
