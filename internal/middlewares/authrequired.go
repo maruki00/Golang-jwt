@@ -40,6 +40,7 @@ func AuthRequired() gin.HandlerFunc {
 			ctx.JSON(401, map[string]string{
 				"error: ": "unauthorized",
 			})
+			return
 		}
 		ctx.Next()
 	}
