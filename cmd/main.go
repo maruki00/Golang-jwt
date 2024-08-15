@@ -1,17 +1,22 @@
 package main
 
 import (
-	"net/http"
+	"Golang-jwt/internal/middlewares"
+	"Golang-jwt/internal/routes"
+
+	"github.com/gin-gonic/gin"
 )
 
+type User struct {
+	Email    string
+	Password string
+}
+
 func main() {
-	// r := gin.Default()
-	// r.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{
-	// 		"message": "pong",
-	// 	})
-	// })
 
-	_ = http.ListenAndServe(":3000", nil)
+	router := gin.New()
+	router.Use(middlewares.AuthRequired())
+	routes.RegisterUsers(router)
 
+	router.Run(":3000")
 }
