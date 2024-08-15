@@ -49,10 +49,10 @@ func AuthRequired() gin.HandlerFunc {
 
 		db := core.GetDB()
 
-		st, err := db.Prepare("select * from auths where token = ?")
+		st, err := db.Prepare("select user_id from auths where token = ?")
 		if err != nil {
 			ctx.AbortWithStatusJSON(401, map[string]string{
-				"error: ": "unauthorized",
+				"error: ": "auth table error",
 			})
 			return
 		}
@@ -60,7 +60,7 @@ func AuthRequired() gin.HandlerFunc {
 		err = st.QueryRow(tokenString).Scan(&user_id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(401, map[string]string{
-				"error: ": "unauthorized",
+				"error: ": "token not found " + err.Error(),
 			})
 			return
 		}
