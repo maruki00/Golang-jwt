@@ -3,6 +3,7 @@ package repositories
 import (
 	"Golang-jwt/internal/core"
 	"Golang-jwt/internal/dtos"
+	"Golang-jwt/internal/models"
 	"crypto/md5"
 	"errors"
 	"fmt"
@@ -81,4 +82,19 @@ func (l *UserRepository) Register(email, fullname, address, password string) (*d
 	}
 	fmt.Println("\nresult register : ", res)
 	return nil, nil
+}
+
+func (l *UserRepository) GetUsers(page, offset int) ([]*models.UserModel, error) {
+
+	db := core.GetDB()
+	pag := (page * offset) + offset
+	statement, err := db.Prepare("SELECT id, email, fullname, address from users limit ?,? ")
+	if err != nil {
+		return nil, errors.New("something wrong ....")
+	}
+
+	res := statement.QueryRow(pag, offset)
+	fmt.Print(res.Scan())
+
+	return []models.UserModel{}
 }
