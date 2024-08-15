@@ -1,8 +1,7 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"Golang-jwt/internal/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,14 +12,9 @@ type User struct {
 }
 
 func main() {
+
 	router := gin.Default()
+	routes.RegisterAuth(router)
 
-	router.GET("/", func(ctx *gin.Context) {
-
-		fmt.Println(ctx.Request.Body)
-		var u User
-		json.NewDecoder(ctx.Request.Body).Decode(&u)
-		ctx.JSON(200, u)
-	})
-	router.Run()
+	router.Run(":3000")
 }

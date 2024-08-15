@@ -1,6 +1,8 @@
-package internal
+package repositories
 
 import (
+	"Golang-jwt/internal/core"
+	"Golang-jwt/internal/dtos"
 	"crypto/md5"
 	"errors"
 	"fmt"
@@ -14,9 +16,9 @@ type UserRepository struct {
 
 var secretKey = []byte("golang-jwt")
 
-func (obj *UserRepository) Login(email, password string) (*AuthDTO, error) {
-	auth := &AuthDTO{}
-	db := GetDB()
+func (obj *UserRepository) Login(email, password string) (*dtos.AuthDTO, error) {
+	auth := &dtos.AuthDTO{}
+	db := core.GetDB()
 	defer db.Close()
 	hash := md5.Sum([]byte(password))
 	h := fmt.Sprintf("%x", hash)
@@ -30,6 +32,9 @@ func (obj *UserRepository) Login(email, password string) (*AuthDTO, error) {
 		return nil, errors.New("invalid creadentails " + err.Error())
 	}
 	auth.Token, err = createToken(auth.Email, auth.Fullname)
+	if err != nil {
+		panic("could not create token ")
+	}
 	return auth, nil
 }
 

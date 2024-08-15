@@ -10,3 +10,10 @@ type RegisterDTO struct {
 	Fullname string
 	Address  string
 }
+
+type AuthDTO struct {
+	Id       int
+	Email    string
+	Fullname string
+	Token    string
+}
