@@ -17,7 +17,7 @@ func RegisterUsers(router *gin.Engine) {
 
 	router.POST("/api/auth/login", authController.LoginAction)
 	router.POST("/api/auth/register", authController.RegisterAction)
-	users := router.Group("/api/users")
+	users := router.Group("/api/users/")
 	users.Use(middlewares.AuthRequired())
-	users.GET("/api/users.get", authController.GetUsersAction)
+	users.GET("/get", authController.GetUsersAction)
 }
