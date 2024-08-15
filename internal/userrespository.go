@@ -12,7 +12,7 @@ import (
 type UserRepository struct {
 }
 
-var secretKey = []byte("secret-key")
+var secretKey = []byte("golang-jwt")
 
 func (obj *UserRepository) Login(email, password string) (*AuthDTO, error) {
 	auth := &AuthDTO{}
@@ -29,9 +29,8 @@ func (obj *UserRepository) Login(email, password string) (*AuthDTO, error) {
 		fmt.Println(err.Error())
 		return nil, errors.New("invalid creadentails " + err.Error())
 	}
-
 	auth.Token, err = createToken(auth.Email, auth.Fullname)
-
+	return auth, nil
 }
 
 func createToken(email, fullname string) (string, error) {
@@ -46,7 +45,6 @@ func createToken(email, fullname string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return tokenString, nil
 }
 
@@ -54,14 +52,11 @@ func verifyToken(tokenString string) error {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
-
 	if err != nil {
 		return err
 	}
-
 	if !token.Valid {
 		return fmt.Errorf("invalid token")
 	}
-
 	return nil
 }
