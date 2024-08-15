@@ -16,6 +16,7 @@ func verifyToken(tokenString string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("tokn : ", token)
 	if !token.Valid {
 		return fmt.Errorf("invalid token")
 	}
@@ -23,25 +24,26 @@ func verifyToken(tokenString string) error {
 }
 
 func AuthRequired() gin.HandlerFunc {
+
 	return func(ctx *gin.Context) {
+		// tokenString := ctx.Request.Header.Get("Authorization")
+		// if tokenString == "" || len(tokenString) < 8 {
+		// 	ctx.AbortWithStatusJSON(401, map[string]string{
+		// 		"error: ": "Missing authorization header",
+		// 	})
+		// }
 
-		tokenString := ctx.Request.Header.Get("Authorization")
-		if tokenString == "" {
-			ctx.JSON(401, map[string]string{
-				"error: ": "Missing authorization header",
-			})
-			return
-		}
-		tokenString = tokenString[len("Bearer "):]
+		// tokenString = strings.Replace(tokenString, "Bearer ", "", 7)
 
-		err := verifyToken(tokenString)
+		// err := verifyToken(tokenString)
 
-		if err != nil {
-			ctx.JSON(401, map[string]string{
-				"error: ": "unauthorized",
-			})
-			return
-		}
+		// if err != nil {
+		// 	ctx.AbortWithStatusJSON(401, map[string]string{
+		// 		"error: ": "unauthorized",
+		// 	})
+
+		// }
+		// fmt.Print(tokenString)
 		ctx.Next()
 	}
 }

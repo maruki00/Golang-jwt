@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Golang-jwt/internal/middlewares"
 	"Golang-jwt/internal/routes"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,8 @@ type User struct {
 
 func main() {
 
-	router := gin.Default()
+	router := gin.New()
+	router.Use(middlewares.AuthRequired())
 	routes.RegisterAuth(router)
 
 	router.Run(":3000")

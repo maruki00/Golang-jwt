@@ -14,8 +14,7 @@ func (l *AuthService) Login(login, password string) (*dtos.AuthDTO, error) {
 	return l.repo.Login(login, password)
 }
 
-func (l *AuthService) Register(login, password string) (*dtos.AuthDTO, error) {
+func (l *AuthService) Register(email, password, fullname, address string) (*dtos.RegisterDTO, error) {
 
-	return l.repo.Login(login, password)
-
+	return l.repo.Register(email, fullname, address, password)
 }
