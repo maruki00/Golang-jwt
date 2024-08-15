@@ -5,6 +5,7 @@ import (
 	"Golang-jwt/internal/services"
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,7 @@ func (l *AuthController) LoginAction(ctx *gin.Context) {
 	var dto dtos.LoginDTO
 	json.NewDecoder(ctx.Request.Body).Decode(&dto)
 
+	fmt.Println("level : ", dto)
 	auth, err := l.service.Login(dto.Login, dto.Password)
 
 	if err != nil {

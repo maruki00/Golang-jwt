@@ -9,6 +9,7 @@ type RegisterDTO struct {
 	Email    string
 	Fullname string
 	Address  string
+	Password string
 }
 
 type AuthDTO struct {

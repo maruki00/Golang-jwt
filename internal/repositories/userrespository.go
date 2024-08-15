@@ -3,7 +3,6 @@ package repositories
 import (
 	"Golang-jwt/internal/core"
 	"Golang-jwt/internal/dtos"
-	"crypto/md5"
 	"errors"
 	"fmt"
 	"time"
@@ -20,11 +19,13 @@ func (obj *UserRepository) Login(email, password string) (*dtos.AuthDTO, error) 
 	auth := &dtos.AuthDTO{}
 	db := core.GetDB()
 	defer db.Close()
-	hash := md5.Sum([]byte(password))
-	h := fmt.Sprintf("%x", hash)
+	//hash := md5.Sum([]byte(password))
+	//h := fmt.Sprintf("%x", hash)
+	h := password
 	statement, err := db.Prepare("select id, email,fullname  from users where email=? and password = ?")
+	fmt.Println("data : ", password, email)
 	if err != nil {
-		panic("invalid credentails")
+		return nil, errors.New("invalid credentails " + err.Error())
 	}
 	err = statement.QueryRow(email, h).Scan(&auth.Id, &auth.Email, &auth.Fullname)
 	if err != nil {
